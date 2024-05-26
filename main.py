@@ -27,4 +27,6 @@ def create_answer(item: Item_qna):
     docs = get_retrived_context(item.question)
     result = get_answer(item.question)
 
-    return {"question": item.question, "answer": result["output"], "docs": docs}
+    print("@@ result:", result)
+
+    return {"question": item.question, "answer": result, "docs": docs}
