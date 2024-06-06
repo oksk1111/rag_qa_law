@@ -43,6 +43,7 @@ def get_retrived_context(q):
     return retriever.invoke(q)
 
 
+
 # Agent를 이용해 툴을 분류
 #- 대화형 발화의 분류가 어려워 단발화에 활용
 # def get_answer(q):
@@ -186,7 +187,22 @@ def get_search_result(q):
     agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
     ai_msg = agent_executor.invoke({"input": q})
 
-    return ai_msg['output']
+    chain_handler = ChainHandler()
+    result = agent_executor.invoke(
+        {
+            "input": q
+        },
+        {
+            "callbacks": [chain_handler]
+        }
+    )
+
+    # print("## chain_handler.domain:", chain_handler.domain) # 어떤 도메인으로 분류되었는지; RAG(='law_qa_search') or ReAct(='tavily_search_results_json')
+    print("## chain_handler.details:", chain_handler.details) # ReAct는 분류 과정을 얻을 수 있다. (예: url, content 각각 따로 확보 가능)
+    
+
+
+    return ai_msg['output'], chain_handler.details, "etc"
 
 
 # Historical RAG
@@ -240,7 +256,7 @@ def get_rag_result(q):
         ]
     )
 
-    return ai_msg["answer"]
+    return ai_msg["answer"], get_retrived_context(q), "law"
 
 
 def get_answer(q):

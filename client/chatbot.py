@@ -31,8 +31,12 @@ with gr.Blocks() as rag_tester:
 
         # Retreived context
         source_text = ""
-        for ix, doc in enumerate(result['docs']):
-            source_text += f"## 검색문서 {ix+1}\n```\n{doc['page_content']}\n```\n\n"
+        if result['domain'] == "law":
+            for ix, doc in enumerate(result['docs']):
+                source_text += f"## 검색문서 {ix+1}\n```\n{doc['page_content']}\n```\n\n"
+        else: # "etc"
+            for ix, doc in enumerate(result['docs']):
+                source_text += f"## 참조링크: {doc['url']}\n```\n## 내용: {doc['content']}\n```\n\n"
 
         return history, source_text
     

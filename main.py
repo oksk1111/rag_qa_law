@@ -5,7 +5,7 @@
 from dotenv import load_dotenv
 load_dotenv()
 
-from src.logics import get_answer, get_retrived_context
+from src.logics import get_answer, get_retrived_context, prev_domain
 
 
 
@@ -17,16 +17,15 @@ from pydantic import BaseModel
 
 app = FastAPI()
 
-
 class Item_qna(BaseModel):
     question: str
 
 @app.post("/question")
 def create_answer(item: Item_qna):
 
-    docs = get_retrived_context(item.question)
-    result = get_answer(item.question)
+    result, docs, domain = get_answer(item.question)
 
     print("@@ result:", result)
+    print("@@ docs:", docs)
 
-    return {"question": item.question, "answer": result, "docs": docs}
+    return {"question": item.question, "domain": domain, "answer": result, "docs": docs}
